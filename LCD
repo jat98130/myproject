@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#define a dataR[0][1]
+#define b dataR[1][2]
+#define c dataR[2][2]
+#define d dataR[2][1]
+#define e dataR[2][0]
+#define f dataR[1][0]
+#define g dataR[1][1]
+
+char output[3][1000];
+int count =0;
+void Append(int);
+char*itoa(int value,char*string,int radix);
+void AppendEX(int);
+unsigned char DotFix[16]={0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7d,0x07,0x7f,0x6f,0x77,0x7c,0x39,0x5e,0x79,0x71};
+
+//读入数据，输出数码管形式
+int main(){
+    int x;
+    scanf("%d",&x);
+    AppendEX(x);
+    printf("%s\n%s\n%s\n",output[0],output[1],output[2]);
+    return 0;
+}
+//添加大于10的函数
+void AppendEX(int dr){
+    char dataR[1000];int countR=0;
+    itoa(dr,dataR,10);
+    while(dataR[countR]!='\0'){
+        Append((int)(dataR[countR]-'0'));
+        countR ++;
+    }
+}
+//添加小于10的函数
+void Append(int dr){
+    char dataR[4][4] = {"...","...","..."};
+    unsigned char in = DotFix[dr];
+    a=(in&(0x01<<0))?'_':'.';
+    b=(in&(0x01<<1))?'|':'.';
+    c=(in&(0x01<<2))?'|':'.';
+    d=(in&(0x01<<3))?'_':'.';
+    e=(in&(0x01<<4))?'|':'.';
+    f=(in&(0x01<<5))?'|':'.';
+    g=(in&(0x01<<6))?'_':'.';
+    strcat(output[0],dataR[0]);
+    strcat(output[1],dataR[1]);
+    strcat(output[2],dataR[2]);
+    strcat(output[0]," ");
+    strcat(output[1]," ");
+    strcat(output[2]," ");
+    count ++;
+}
+//把int转换为string（itoa是广泛应用的非标准C语言和C++语言扩展函数）
+//这个函数是从C11复制的
+char* itoa(int num,char*str,int radix)
+{
+char index[]="0123456789ABCDEF";
+unsigned unum;
+int i=0,j,k;
+if(radix==10&&num<0)
+{
+unum=(unsigned)-num;
+str[i++]='-';
+}
+else unum=(unsigned)num;
+do{
+str[i++]=index[unum%(unsigned)radix];
+unum/=radix;
+}while(unum);
+str[i]='\0';
+if(str[0]=='-')k=1;
+else k=0;
+char temp;
+for(j=k;j<=(i-1)/2;j++)
+{
+temp=str[j];
+str[j]=str[i-1+k-j];
+str[i-1+k-j]=temp;
+}
+return str;
+}
